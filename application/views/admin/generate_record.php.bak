@@ -1,0 +1,501 @@
+<?php if ($role == ROLE_RAD_ADMIN || $role == ROLE_SUPER_ADMIN) : ?>
+<div class="col-md-6">
+	<h3>Findings</h3>
+	<div class="text-box-border">
+		<?php 
+			$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id =0")[0];
+		?>
+		<div class="impressions_text">
+			<b>Technique: </b><?=$this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id'","techniques")?><br><br>
+			<?php 
+				$date = $this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id'","comparison_date");
+			if($date != 0000-00-00):
+			?>
+				<b>Comparison Date: </b> <?= date("d-m-Y", strtotime($this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id'","comparison_date")))?><br><br>
+			<?php else: ?>
+				<b>Comparison Date: </b></br></br>
+			<?php endif?>
+			<b>Finding:</b><br>
+				<?php 
+					if($this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id' and option_name != 0 ","option_name") != "") { 
+				?>
+				<?php 
+					$answer_id = array();
+					foreach ($this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name != '0' and c.status='0' and a.status='0'") as $template) 
+					{ 
+						$answer_id[] = $template->form_fields_id;
+					}
+					$answer_option = array();
+					foreach ($this->common_model->get_records('tbl_template_values', "status='0' and template_form_id ='$template->template_form_id' and option_name!=''") as $template_answer) 
+					{
+						foreach ($this->common_model->get_records('tbl_input_options', "status='0' and id='$template_answer->option_name'") as $template_value) 
+						{ 
+							$answer_option[] = $template_value->name;
+						}
+					}
+
+
+					$test = $this->common_model->get_custom_query("SELECT c.* FROM `tbl_template_values` as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name !=0 and c.status='0' and a.status='0' group by order_by");
+					$test1 = $this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_form_template_fields as c where a.label_id = c.id and c.template_form_id ='$template_form_id' and a.option_name = 0 and c.status='0' and a.status='0'");
+					
+					$dropdown_answer = $this->common_model->get_custom_query("SELECT b.* FROM `tbl_template_values` as a, tbl_input_options as b where a.option_name = b.id and a.template_form_id = '$template_form_id' and a.option_name !=0 and b.finding_text != '' and b.status='0' and a.status='0'");
+					
+					$answer_finding = array();	
+					foreach($test as $t) {
+						
+						foreach ($this->common_model->get_records('tbl_title_answer_master', "status='0' and template_id='$template_form_id' and title_id='$t->title'") as $answer)
+						{
+							//$answer_finding[] = $answer->finding_text;
+							$final_result = str_replace($answer_id, $answer_option, $answer->finding_text);
+							//echo $final_result . "<br>"; 
+							$answer_id1 = array();
+							foreach($test1 as $t) {
+								
+								$answer_id1[] =$t->form_fields_id;
+								$answer_finding[] = $answer->finding_text;
+								$final_result1 = str_replace($answer_id1, "", $final_result);
+								//print_r($final_result1);
+							}
+							echo $final_result1 ;
+							
+						}
+					}
+					foreach ($dropdown_answer as $dropdown_answer1 )
+					{
+						
+						echo $dropdown_answer1->finding_text ;
+					}
+					
+
+				?>
+				<?php } else { ?>
+					<?php 
+						$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id =0")[0];
+					?>
+						<?php  echo $empty_result->finding_text ?>
+					
+				<?php } ?>
+			</div>
+		
+	</div>
+</div>
+
+<div class="col-md-6">
+	<h3>Impressions</h3>
+	<?php 
+		$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id =0")[0];
+	?>
+		<div class="text-box-border">
+		<b>Impressions:</b> <br>
+			<?php 
+				if($this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id' and option_name != 0 ","option_name") != "") {  
+			?>
+			<?php 
+				$i = 1;
+				$answer_id = array();
+				foreach ($this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name != '' and c.status='0' and a.status='0'") as $template) 
+				{ 
+					$answer_id[] = $template->form_fields_id;
+				}
+				$answer_option = array();
+				foreach ($this->common_model->get_records('tbl_template_values', "status='0' and template_form_id ='$template->template_form_id' and option_name!=''") as $template_answer) 
+				{
+					foreach ($this->common_model->get_records('tbl_input_options', "status='0' and id='$template_answer->option_name'") as $template_value) 
+					{ 
+						$answer_option[] = $template_value->name;
+					}
+				}
+
+
+				$test = $this->common_model->get_custom_query("SELECT c.* FROM `tbl_template_values` as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name != '' and c.status='0' and a.status='0' group by order_by");
+				
+				$test1 = $this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_form_template_fields as c where a.label_id = c.id and c.template_form_id ='$template_form_id' and a.option_name = 0 and c.status='0' and a.status='0'");
+				
+				$dropdown_answer = $this->common_model->get_custom_query("SELECT b.* FROM `tbl_template_values` as a, tbl_input_options as b where a.option_name = b.id and a.template_form_id = '$template_form_id' and a.option_name !=0 and b.impression_text != '' and b.status='0' and a.status='0'");
+					
+				$answer_finding = array();	
+				foreach($test as $t) {
+					
+					foreach ($this->common_model->get_records('tbl_title_answer_master', "status='0' and template_id='$template_form_id' and title_id='$t->title'") as $answer)
+					{
+						//$answer_finding[] = $answer->finding_text;
+						$final_result = str_replace($answer_id, $answer_option, $answer->finding_text);
+						//echo $final_result . "<br>"; 
+						$answer_id1 = array();
+						foreach($test1 as $t) {
+							
+							$answer_id1[] =$t->form_fields_id;
+							$answer_finding[] = $answer->finding_text;
+							$final_result1 = str_replace($answer_id1, "", $final_result);
+							//print_r($final_result1);
+						}
+						echo $i ."." ;
+						echo $final_result1 . "<br>";
+					}
+					$i++;
+				}
+				foreach ($dropdown_answer as $dropdown_answer1 )
+				{
+					echo $i ."." ;
+					echo $dropdown_answer1->impression_text . "<br>";
+					$i++;
+				}
+				
+				
+			?>
+			<?php } else { ?>
+				<?php 
+					$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id =0")[0];
+				?>
+					<?php 
+						echo 1 ."." ;
+						echo $empty_result->impressing_text  
+					?>
+				
+			<?php } ?>
+			
+		</div>
+	
+</div>
+<?php elseif ($role == ROLE_ADMIN) : ?>
+<div class="col-md-6">
+	<h3>Findings</h3>
+	<div class="text-box-border">
+		<?php 
+			$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id =0")[0];
+		?>
+			<div class="impressions_text">
+			<b>Technique: </b><?=$this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id'","techniques")?><br><br>
+			<?php 
+				$date = $this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id'","comparison_date");
+			if($date != 0000-00-00):
+			?>
+				<b>Comparison Date: </b> <?= date("d-m-Y", strtotime($this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id'","comparison_date")))?><br><br>
+			<?php else: ?>
+				<b>Comparison Date: </b></br></br>
+			<?php endif?>
+			<b>Finding:</b><br>
+				<?php 
+					if($this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id' and option_name != 0 ","option_name") != "") { 
+				?>
+				<?php 
+					$answer_id = array();
+					foreach ($this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name != '0' and c.status='0' and a.status='0'") as $template) 
+					{ 
+						$answer_id[] = $template->form_fields_id;
+					}
+					$answer_option = array();
+					foreach ($this->common_model->get_records('tbl_template_values', "status='0' and template_form_id ='$template->template_form_id' and option_name!=''") as $template_answer) 
+					{
+						foreach ($this->common_model->get_records('tbl_input_options', "status='0' and id='$template_answer->option_name'") as $template_value) 
+						{ 
+							$answer_option[] = $template_value->name;
+						}
+					}
+
+
+					$test = $this->common_model->get_custom_query("SELECT c.* FROM `tbl_template_values` as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name !=0 and c.status='0' and a.status='0' group by order_by");
+					$test1 = $this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_form_template_fields as c where a.label_id = c.id and c.template_form_id ='$template_form_id' and a.option_name = 0 and c.status='0' and a.status='0'");
+					
+					$dropdown_answer = $this->common_model->get_custom_query("SELECT b.* FROM `tbl_template_values` as a, tbl_input_options as b where a.option_name = b.id and a.template_form_id = '$template_form_id' and a.option_name !=0 and b.finding_text != '' and b.status='0' and a.status='0'");
+					
+					$answer_finding = array();	
+					foreach($test as $t) {
+						
+						foreach ($this->common_model->get_records('tbl_title_answer_master', "status='0' and template_id='$template_form_id' and title_id='$t->title'") as $answer)
+						{
+							//$answer_finding[] = $answer->finding_text;
+							$final_result = str_replace($answer_id, $answer_option, $answer->finding_text);
+							//echo $final_result . "<br>"; 
+							$answer_id1 = array();
+							foreach($test1 as $t) {
+								
+								$answer_id1[] =$t->form_fields_id;
+								$answer_finding[] = $answer->finding_text;
+								$final_result1 = str_replace($answer_id1, "", $final_result);
+								//print_r($final_result1);
+							}
+							echo $final_result1 ;
+							
+						}
+					}
+					foreach ($dropdown_answer as $dropdown_answer1 )
+					{
+						
+						echo $dropdown_answer1->finding_text ;
+					}
+					
+
+				?>
+				<?php } else { ?>
+					<?php 
+						$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id =0")[0];
+					?>
+						<?php  echo $empty_result->finding_text ?>
+					
+				<?php } ?>
+		</div>
+		
+	</div>
+</div>
+
+<div class="col-md-6">
+	<h3>Impressions</h3>
+	<?php 
+		$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id =0")[0];
+	?>
+		<div class="text-box-border">
+		<b>Impressions:</b> <br>
+			<?php 
+				if($this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id' and option_name != 0 ","option_name") != "") {  
+			?>
+			<?php 
+				$i = 1;
+				$answer_id = array();
+				foreach ($this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name != '' and c.status='0' and a.status='0'") as $template) 
+				{ 
+					$answer_id[] = $template->form_fields_id;
+				}
+				$answer_option = array();
+				foreach ($this->common_model->get_records('tbl_template_values', "status='0' and template_form_id ='$template->template_form_id' and option_name!=''") as $template_answer) 
+				{
+					foreach ($this->common_model->get_records('tbl_input_options', "status='0' and id='$template_answer->option_name'") as $template_value) 
+					{ 
+						$answer_option[] = $template_value->name;
+					}
+				}
+
+
+				$test = $this->common_model->get_custom_query("SELECT c.* FROM `tbl_template_values` as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name != '' and c.status='0' and a.status='0' group by order_by");
+				
+				$test1 = $this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_form_template_fields as c where a.label_id = c.id and c.template_form_id ='$template_form_id' and a.option_name = 0 and c.status='0' and a.status='0'");
+				
+				$dropdown_answer = $this->common_model->get_custom_query("SELECT b.* FROM `tbl_template_values` as a, tbl_input_options as b where a.option_name = b.id and a.template_form_id = '$template_form_id' and a.option_name !=0 and b.impression_text != '' and b.status='0' and a.status='0'");
+					
+				$answer_finding = array();	
+				foreach($test as $t) {
+					
+					foreach ($this->common_model->get_records('tbl_title_answer_master', "status='0' and template_id='$template_form_id' and title_id='$t->title'") as $answer)
+					{
+						//$answer_finding[] = $answer->finding_text;
+						$final_result = str_replace($answer_id, $answer_option, $answer->finding_text);
+						//echo $final_result . "<br>"; 
+						$answer_id1 = array();
+						foreach($test1 as $t) {
+							
+							$answer_id1[] =$t->form_fields_id;
+							$answer_finding[] = $answer->finding_text;
+							$final_result1 = str_replace($answer_id1, "", $final_result);
+							//print_r($final_result1);
+						}
+						echo $i ."." ;
+						echo $final_result1 . "<br>";
+					}
+					$i++;
+				}
+				foreach ($dropdown_answer as $dropdown_answer1 )
+				{
+					echo $i ."." ;
+					echo $dropdown_answer1->impression_text . "<br>";
+					$i++;
+				}
+				
+				
+			?>
+			<?php } else { ?>
+				<?php 
+					$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id =0")[0];
+				?>
+					<?php 
+						echo 1 ."." ;
+						echo $empty_result->impressing_text  
+					?>
+				
+			<?php } ?>			
+		</div>
+	
+</div>
+<?php elseif ($role == ROLE_SCRIBE) : ?>
+<div id="div1" >
+	<div class="col-md-6">
+		<h3 class="temp">Findings</h3> 
+			<!--<a class="copy-text btn btn-primary" data-clipboard-target="#content1"  href="javascript:void(0)">Copy To Clipboard</a>-->
+		<?php 
+			$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id =0")[0];
+		?>
+		<div contentEditable="true" id="content1" class="impressions_text text-box-border">
+			<div id="content3">
+				<b>Technique: </b><?=$this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id'","techniques")?><br><br>
+				<input type='hidden' name='techniques' value='<?=$this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id'","techniques")?>'>
+				<input type='hidden' name='template_form_id' value='<?=$template_form_id?>'>
+				<input type='hidden' name='assign_id' value='<?=$_SESSION['userId']?>'>
+				<?php 
+					$date = $this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id'","comparison_date");
+				if($date != 0000-00-00):
+				?>
+					<b>Comparison Date: </b> <?= date("d-m-Y", strtotime($this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id'","comparison_date")))?><br><br>
+					<input type='hidden' name='comparision_date' value='<?= date("d-m-Y", strtotime($this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id'","comparison_date")))?>'>
+				<?php else: ?>
+					<b>Comparison Date: </b></br></br>
+					<input type='hidden' name='comparision_date' value=''>
+				<?php endif?>
+				<b>Finding:</b><br>
+					<?php 
+						if($this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id' and option_name != 0 ","option_name") != "") { 
+					?>
+					<?php 
+						$answer_id = array();
+						foreach ($this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name != '0' and c.status='0' and a.status='0'") as $template) 
+						{ 
+							$answer_id[] = $template->form_fields_id;
+						}
+						$answer_option = array();
+						foreach ($this->common_model->get_records('tbl_template_values', "status='0' and template_form_id ='$template->template_form_id' and option_name!=''") as $template_answer) 
+						{
+							foreach ($this->common_model->get_records('tbl_input_options', "status='0' and id='$template_answer->option_name'") as $template_value) 
+							{ 
+								$answer_option[] = $template_value->name;
+							}
+						}
+
+
+						$test = $this->common_model->get_custom_query("SELECT c.* FROM `tbl_template_values` as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name !=0 and c.status='0' and a.status='0' group by order_by");
+						$test1 = $this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_form_template_fields as c where a.label_id = c.id and c.template_form_id ='$template_form_id' and a.option_name = 0 and c.status='0' and a.status='0'");
+						
+						$dropdown_answer = $this->common_model->get_custom_query("SELECT b.* FROM `tbl_template_values` as a, tbl_input_options as b where a.option_name = b.id and a.template_form_id = '$template_form_id' and a.option_name !=0 and b.finding_text != '' and b.status='0' and a.status='0'");
+						
+						$answer_finding = array();	
+							
+							foreach ($this->common_model->get_records('tbl_title_answer_master', "status='0' and template_id='$template_form_id' and title_id != 0") as $answer)
+							{
+								$answer_finding[] = $answer->finding_text;
+								$final_result = str_replace($answer_id, $answer_option, $answer->finding_text);
+								//echo $final_result . "<br>"; 
+								$answer_id1 = array();
+								foreach($test1 as $t) {
+									
+									$answer_id1[] =$t->form_fields_id;
+									$answer_finding[] = $answer->finding_text;
+									$final_result1 = str_replace($answer_id1, "", $final_result);
+									//print_r($final_result1);
+								}
+								echo $final_result1 .". " ;
+								
+							}
+						foreach ($dropdown_answer as $dropdown_answer1 )
+						{
+							
+							echo $dropdown_answer1->finding_text .". " ;
+						}
+						
+
+					?>
+					<?php } else { ?>
+						<?php 
+							$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id = 0")[0];
+						?>
+							<?php  echo $empty_result->finding_text ?>
+						
+					<?php } ?>
+			</div>
+		</div>
+			<!--<div contentEditable="true" id="content1" class="impressions_text text-box-border">
+				<b>Finding:</b><br>
+				 <?php  echo $empty_result->finding_text ?>
+				<input type='hidden' name='template_form_id' value='<?=$template_form_id?>'>
+				<input type='hidden' name='assign_id' value='<?=$_SESSION['userId']?>'>
+			</div>-->
+	</div>
+	<div class="col-md-6" >
+		<h3 class="temp">Impressions</h3>
+			<!--<a class="copy-text btn btn-primary" data-clipboard-target="#content2"  href="javascript:void(0)">Copy To Clipboard</a>-->
+		<?php 
+			$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id =0")[0];
+		?>
+		<div contentEditable="true" id="content2" class="text-box-border">
+			<div id="content4">
+				<b>Impressions:</b> <br>
+				<?php 
+					if($this->common_model->get_record('tbl_template_values', "status='0' and template_form_id ='$template_form_id' and option_name != 0 ","option_name") != "") {  
+				?>
+					<?php 			
+						$i = 1;
+						$answer_id = array();
+						foreach ($this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name != '' and c.status='0' and a.status='0'") as $template) 
+						{ 
+							$answer_id[] = $template->form_fields_id;
+						}
+						$answer_option = array();
+						foreach ($this->common_model->get_records('tbl_template_values', "status='0' and template_form_id ='$template->template_form_id' and option_name!=''") as $template_answer) 
+						{
+							foreach ($this->common_model->get_records('tbl_input_options', "status='0' and id='$template_answer->option_name'") as $template_value) 
+							{  
+								$answer_option[] = $template_value->name;
+							}
+						}
+
+
+						$test = $this->common_model->get_custom_query("SELECT c.* FROM `tbl_template_values` as a, tbl_input_options as b , tbl_form_template_fields as c where a.option_name = b.id and b.input_id = c.id and c.template_form_id = '$template_form_id' and a.option_name != '' and c.status='0' and a.status='0' group by order_by");
+						  
+						$test1 = $this->common_model->get_custom_query("SELECT c.* FROM tbl_template_values as a, tbl_form_template_fields as c where a.label_id = c.id and c.template_form_id ='$template_form_id' and a.option_name = 0 and c.status='0' and a.status='0'");
+						
+						$dropdown_answer = $this->common_model->get_custom_query("SELECT b.* FROM `tbl_template_values` as a, tbl_input_options as b where a.option_name = b.id and a.template_form_id = '$template_form_id' and a.option_name !=0 and b.impression_text != '' and b.status='0' and a.status='0'");
+							
+						$answer_finding = array();	
+							
+							foreach ($this->common_model->get_records('tbl_title_answer_master', "status='0' and template_id='$template_form_id' and title_id != 0") as $answer)
+							{
+								$answer_finding[] = $answer->impressing_text;
+								$final_result = str_replace($answer_id, $answer_option, $answer->impressing_text);
+								$answer_id1 = array();
+								foreach($test1 as $t) {
+									
+									$answer_id1[] =$t->form_fields_id;
+									$answer_finding[] = $answer->impressing_text;
+									$final_result1 = str_replace($answer_id1, "", $final_result);
+									//print_r($final_result1);
+									
+								}
+								echo "<div class='template-php' id ='content1'>";
+								if($final_result1 != ""){
+									echo $i .". " ;
+									echo $final_result1 . "<br>";
+									echo "</div>";
+								//echo "<input type='hidden' name='impressions_text[]' style value='$final_result1'>";
+								$i++;
+								}
+							}
+							
+						$dropdown_value1 = array();
+						foreach ($dropdown_answer as $dropdown_answer1 )
+						{
+							echo $i ."." ;
+							echo $dropdown_answer1->impression_text . "<br>";
+							//$dropdown_value1[] = $dropdown_answer1->impression_text;
+							$i++;
+							
+						}
+						
+						// print_r($dropdown_value1);
+						
+						// $final_result = str_replace($answer_id, $answer_option, $answer_finding);
+						// $final_result1 = str_replace($answer_id1, "", $final_result);
+						// //echo $final_result1 . "<br>";
+						// //echo $dropdown_value1;
+					?>
+				<?php } else { ?>
+					<?php 
+						$empty_result = $this->common_model->get_records("tbl_title_answer_master","status='0' and template_id ='$template_form_id'and title_id = 0")[0];
+					?>
+						<?php 
+							echo 1 .". " ;
+							echo $empty_result->impressing_text  
+						?>
+					
+				<?php } ?>
+			</div>
+		</div>
+			
+	</div>
+</div>
+<?php endif;?>

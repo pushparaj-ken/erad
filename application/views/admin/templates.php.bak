@@ -1,0 +1,248 @@
+<style>
+    .text-box-border {
+        padding: 20px;
+        border: 2px solid #3c8dbc;
+        margin: 20px 0;
+    }
+</style>
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-body table-responsive">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <h3 class="box-title"><?= $temp_id->name ?></h3>
+                            </div>
+                            <!-- /.box-header -->
+                            <!-- form start -->
+                            <form role="form" class="insert_template" reload-action="true" this_id="<?= uniqid() ?>">
+                                <input type="hidden" name="template_form_id" value="<?php echo $temp_id->id ?>">
+                                <div class="box-body">
+                                    <div class="row">
+										<?php 
+											$template = $this->common_model->get_records('tbl_form_template_fields', "status='0' and template_form_id='$temp_id->id' group by order_by"); 
+											foreach($template as $order) {
+										?>
+										<?php if ($order->title != ""): ?>
+										<h3>
+											<?=$this->common_model->get_record("tbl_main_title","status = '0' and id = '$order->title'","title");?>
+										</h3>
+										<?php endif;?>
+										<?php foreach($this->common_model->get_records('tbl_form_template_fields', "status='0' and template_form_id='$temp_id->id' and order_by = '$order->order_by'") as $template_field) { ?>
+										<?php if ($template_field ->type == 10 ) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="techniques[]" id="<?= $template_field->form_fields_id ?>">
+														<option value="">-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_input_options', "status='0' and input_id='$template_field->id'") as $options) : ?>
+															<option value="<?= $options->name ?>"><?= $options->name ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+											</div>
+										<?php } else if ($template_field ->type == 9 ) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?> <input type ="checkbox" id ="date"></label>
+													<input type ="date" name ="comparison_date[]" class="form-control" id="date1">
+												</div>
+											</div>
+										<?php } else if ($template_field ->type == 2) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="option_name[]" id="<?= $template_field->form_fields_id ?>">
+														<option value="">-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_input_options', "status='0' and input_id='$template_field->id'") as $options) : ?>
+															<option value="<?= $options->id ?>"><?= $options->name ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+												<input type="hidden" value="<?= $order->title ?>" name="title_id[]">
+											</div>
+										<?php } else if ($template_field ->type == 4) { ?>
+											<div class="col-md-12">
+												<div class="form-group " id="checkbox">
+													<?php foreach ($this->common_model->get_records('tbl_input_options', "status='0' and input_id='$template_field->id'") as $options) : ?>
+													   <input type="checkbox" name="option_name[]" id="checkboxes<?= $options->id ?>" onclick="hideshow(<?= $options->id ?>)" value="<?= $options->id ?>">
+														<?= $options->name ?>
+														<input type="hidden" value="<?= $options->id ?>" name="label">
+													<?php endforeach; ?>
+												</div>
+												<?php if($_POST['label'] == 0) 
+												{ 
+													echo '<input type="hidden" value="0" name="option_name[]">';
+												}
+												?>
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+											</div>
+										<?php } } } ?>         
+                                    </div>
+                                </div>
+								<?php print_r($template_form_id)?>
+                                <!-- /.box-body -->
+
+                                <div class="box-footer">
+                                    <button type="submit" class="btn btn-primary">Generate</button>
+                                    <a class="btn btn-primary" onclick="$('.insert_template')[0].reset()">clear</a>
+                                </div>
+								<div class="col-md-6 hide-ans">
+									<h3>Findings</h3>
+									<div class="text-box-border">
+										
+									</div>	
+								</div>	
+								<div class="col-md-6 hide-ans">
+									<h3>Impressions</h3>
+									<div class="text-box-border">
+										<div class="impressions_text"></div>
+									</div>
+								</div>
+                                <div class="answer_text"></div>
+                                <!--<div class="col-md-6">
+                                    <div class="answer_text"></div>
+                                </div>-->
+                            </form>
+                        </div>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+<script>
+    function yesnoCheck(that) {
+        if (that.value == "1") {
+            document.getElementById("seg1").style.display = "block";
+        } else {
+            document.getElementById("seg1").style.display = "none";
+        }
+        if (that.value == "2") {
+            document.getElementById("seg2").style.display = "block";
+        } else {
+            document.getElementById("seg2").style.display = "none";
+        }
+        if (that.value == "3") {
+            document.getElementById("seg3").style.display = "block";
+        } else {
+            document.getElementById("seg3").style.display = "none";
+        }
+    }
+</script>
+
+
+<script>
+    $('body').on("submit", '.insert_template', function(e) {
+        e.preventDefault();
+
+        var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+		 //$('.insert_template input[type=checkbox]:not(:checked)').each(function () {
+			 // //$(".insert_template input[type=checkbox]").prop('checked', '');
+		// //	$('.insert_template input[type=checkbox]').val(0);
+		//$(this).prop('checked', 'true');
+			//$(this).val('0');
+			//$(this).prop('checked', 'false');
+// $("input[name='option_name[]']").each( function () {
+       // $(this).val(0) ;
+    //});
+		// });
+		//$('.insert_template input[type=checkbox]').val(0);
+		var checkedValue = $('#date:checked').val();
+		if(checkedValue != '')
+		{
+			$('#date1').val();
+		}
+		else
+		{
+			$('#date1').val(0);
+		}
+        if (is_required(this_id) === true) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + "admin/insert_template",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                    $(this_id + ' button[type=submit]').attr('disabled', 'true');
+                },
+                success: function(response) {
+                    console.log(response);
+                    if (response.result == 1) {
+                        // $(this_id)[0].reset();
+                        toastr.success('Success!');
+                        var temps_id = response.temp_id;
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                        $(this_id + ' button[type=submit]').removeAttr('disabled');
+                        $.ajax({
+                            type: 'POST',
+                            url: baseURL + "admin/get_answer_value",
+                            data: "template_id=" + temps_id,
+                            success: function(response2) {
+                                $('.answer_text').html(response2);
+								$('.hide-ans').hide();
+                            }
+                        });
+                    } else {
+                        toastr.error('Something went wrong! Please try again later!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                        $(this_id + ' button[type=submit]').removeAttr('disabled');
+                    }
+                }
+            });
+        } else {
+            toastr.error('Please check the required fields!');
+        }
+    });
+</script>
+<script>
+    function hideshow($id) {
+        $.ajax({
+            type: "POST",
+            url: baseURL + "admin/get-value/" + $id,
+            dataType: "json",
+            success: function(response) {
+                if (response.result == 1) {
+                    $.each(response.records, function(key, val) {
+
+                        var option = val.select_fields_id;
+                        var options = val.option_id;
+                        if ($('#checkboxes' + options).is(":checked")) {
+                            $("#" + option).hide();
+                        } else {
+                            $("#" + option).show();
+                        }
+                    })
+                }
+            }
+        });
+    }
+</script>
+<script>
+    function generate($id) {
+        $.ajax({
+            type: "POST",
+            url: baseURL + "admin/get-generator/" + $id,
+            dataType: "json",
+            success: function(response) {
+                if (response.result == 1) {
+
+                    $('#test').text();
+                }
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/admin/js/common.js" charset="utf-8"></script>

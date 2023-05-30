@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title><?php echo $pageTitle; ?></title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <!-- Bootstrap 3.3.4 -->
+    <!--	<link rel="icon" type="image/png" href="<?= base_url() ?>assets/public/images/icon.png" sizes="32x32">
+                <link rel="icon" type="image/png" href="<?= base_url() ?>assets/public/images/icon1.png" sizes="16x16"> -->
+    <link href="<?php echo base_url(); ?>assets/admin/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- FontAwesome 4.3.0 -->
+    <link href="<?php echo base_url(); ?>assets/admin/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <!-- Ionicons 2.0.0 -->
+    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?= base_url() ?>assets/admin/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?= base_url() ?>assets/admin/plugins/iCheck/all.css" rel="stylesheet" type="text/css" />
+    <!-- Theme style -->
+    <link href="<?php echo base_url(); ?>assets/admin/dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+    <!-- AdminLTE Skins. Choose a skin from the css/skins 
+         folder instead of downloading all of them to reduce the load. -->
+    <link href="<?php echo base_url(); ?>assets/admin/dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo base_url(); ?>assets/admin/dist/css/datatables.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="<?php echo base_url(); ?>assets/admin/css/style.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo base_url(); ?>assets/admin/css/util.css" rel="stylesheet" type="text/css" />
+
+
+
+    <!--<link href="<?php echo base_url(); ?>assets/admin/js/form2/bootstrap-form-builder-gh-pages/assets/css/lib/bootstrap.min.css" rel="stylesheet">-->
+
+
+
+    <style>
+        .error {
+            color: red;
+            font-weight: normal;
+        }
+
+        .form-control {
+            margin-bottom: 10px;
+        }
+
+        .input-group {
+            position: relative;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -ms-flex-align: stretch;
+            align-items: stretch;
+            width: 100%;
+        }
+
+        .input-group-prepend {
+            margin-right: -1px;
+        }
+
+        .input-group-append,
+        .input-group-prepend {
+            display: -ms-flexbox;
+            display: flex;
+        }
+
+        .input-group>.input-group-append:last-child>.btn:not(:last-child):not(.dropdown-toggle),
+        .input-group>.input-group-append:last-child>.input-group-text:not(:last-child),
+        .input-group>.input-group-append:not(:last-child)>.btn,
+        .input-group>.input-group-append:not(:last-child)>.input-group-text,
+        .input-group>.input-group-prepend>.btn,
+        .input-group>.input-group-prepend>.input-group-text {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .input-group-append .btn,
+        .input-group-prepend .btn {
+            position: relative;
+            z-index: 2;
+        }
+
+        [type=button]:not(:disabled),
+        [type=reset]:not(:disabled),
+        [type=submit]:not(:disabled),
+        button:not(:disabled) {
+            cursor: pointer;
+        }
+
+        .input-group>.custom-select:not(:first-child),
+        .input-group>.form-control:not(:first-child) {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .input-group>.custom-file,
+        .input-group>.custom-select,
+        .input-group>.form-control,
+        .input-group>.form-control-plaintext {
+            position: relative;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            width: 1%;
+            margin-bottom: 0;
+        }
+        
+        .user-image2{
+               width: 123px;
+    padding: 7px 15px;
+    background: #fff;
+    position: relative;
+    top: 11px;
+    border-radius: 20px;
+        }
+    </style>
+    <!-- jQuery 2.1.4 -->
+    <script src="<?php echo base_url(); ?>assets/admin/js/jQuery-2.1.4.min.js"></script>
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" type="text/css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link href="<?php echo base_url(); ?>assets/admin/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="<?php echo base_url(); ?>assets/admin/dist/js/select2.full.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+        var baseURL = "<?php echo base_url(); ?>";
+    </script>
+
+</head>
+<!-- <body class="sidebar-mini skin-black-light"> -->
+
+<body class="skin-blue sidebar-mini sidebar-closed sidebar-collapse ">
+    <div class="wrapper">
+
+        <header class="main-header">
+            <!-- Logo -->
+            <a href="<?php echo base_url(); ?>admin/" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini">
+                    <!--  <b>
+                        Era
+                    </b>-->
+                    <div style="background:#fff;"> <img src="<?php echo base_url(); ?>assets/public/img/eradlogo.png" width="15px" class="user-image" alt="User Image" /></div>
+                    
+                </span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg">
+               <!--  <b>
+                        Era
+                    </b>-->
+                    
+                     <img src="<?php echo base_url(); ?>assets/public/img/eradlogo.png" class="user-image" alt="User Image" />
+                </span>
+            </a>
+            
+           
+            <!-- Header Navbar: style can be found in header.less -->
+            <nav class="navbar navbar-static-top" role="navigation" style="text-align:center;">
+                <!-- Sidebar toggle button-->
+                <!-- <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a> -->
+                
+                <img src="<?php echo base_url(); ?>assets/public/img/eradlogo2.png" class="user-image2" alt="User Image" />
+               
+             
+                <div class="navbar-custom-menu">  
+                    <ul class="nav navbar-nav">
+                            
+                        <!-- User Account: style can be found in dropdown.less -->
+                        <li class="dropdown user user-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <img src="<?php echo base_url(); ?>assets/admin/dist/img/avatar.png" class="user-image" alt="User Image" />
+                                <span class="hidden-xs"><?php echo $name; ?></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- User image -->
+                                <li class="user-header">
+                                    <img src="<?php echo base_url(); ?>assets/admin/dist/img/avatar.png" class="img-circle" alt="User Image" />
+                                    <p>
+                                        <?php echo $name; ?>
+                                        <small><?php echo $role_text; ?></small>
+                                    </p>
+                                </li>
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="<?php echo base_url(); ?>admin/loadChangePass" class="btn btn-default btn-flat"><i class="fa fa-key"></i> Change Password</a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="<?php echo base_url(); ?>admin/logout" class="btn btn-default btn-flat"><i class="fa fa-sign-out"></i> Sign out</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <aside class="main-sidebar">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+
+                <!-- sidebar menu: : style can be found in sidebar.less -->
+                <ul class="sidebar-menu">
+
+                    <li class="treeview">
+                        <a href="<?php echo base_url(); ?>admin/dashboard">
+                            <i class="fa fa-dashboard"></i> <span>Dashboard</span></i>
+                        </a>
+                    </li>
+
+                    <?php if ($role == ROLE_RAD_ADMIN || $role == ROLE_SUPER_ADMIN) : ?>
+                        <li class="treeview">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-file"></i>
+                                <span>Masters</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="<?= base_url() ?>admin/category"><i class="fa fa-circle-o"></i> Category </a></li>
+                                <li><a href="<?= base_url() ?>admin/sub-category"><i class="fa fa-circle-o"></i> Sub Category</a></li>
+                                <li><a href="<?= base_url() ?>admin/child-category"><i class="fa fa-circle-o"></i>Child Category</a></li>
+                                <li><a href="<?= base_url() ?>admin/group-master"><i class="fa fa-circle-o"></i>Group Master</a></li>
+                                <li><a href="<?= base_url() ?>admin/main-title"><i class="fa fa-circle-o"></i>Main Title</a></li>
+                                <li><a href="<?= base_url() ?>admin/answer-master"><i class="fa fa-circle-o"></i>Title Answer Master</a></li>
+								<li><a href="<?= base_url() ?>admin/answer-report-master"><i class="fa fa-circle-o"></i>Answer Report</a></li>
+								<li><a href="<?= base_url() ?>admin/condition-master"><i class="fa fa-circle-o"></i>Condition</a></li>
+								<li><a href="<?= base_url() ?>admin/condition-option-master"><i class="fa fa-circle-o"></i>Condition Option</a></li>
+								<li><a href="<?= base_url() ?>admin/instant-click-master"><i class="fa fa-circle-o"></i>Instant Click</a></li>
+								<li><a href="<?= base_url() ?>admin/petct-template"><i class="fa fa-circle-o"></i> Pet Ct </a></li>
+								<li><a href="<?= base_url() ?>admin/collapse-join"><i class="fa fa-circle-o"></i> Collapse Join </a></li>
+								<li><a href="<?= base_url() ?>admin/main-answer-heading"><i class="fa fa-circle-o"></i>Main Answer Heading</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="<?= base_url() ?>admin/form-templates">
+                                <i class="fa fa-file"></i>
+                                <span>Form Templates </span>
+                            </a>
+                            <!--<ul class="treeview-menu">
+                                <li><a href="<?= base_url() ?>admin/form-templates"><i class="fa fa-circle-o"></i> Form Details</a></li>
+                            </ul>-->
+                        </li>
+                        <li class="treeview">
+                            <a href="<?= base_url() ?>admin/form-templates-assign">
+                                <i class="fa fa-file"></i>
+                                <span>Form Templates Assign</span>
+                            </a>
+                           <!-- <ul class="treeview-menu">
+                                <li><a href="<?= base_url() ?>admin/form-templates-assign"><i class="fa fa-circle-o"></i> Form Assign Details</a></li>
+                            </ul>-->
+                        </li>
+                        <!-- <li class="treeview">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-file"></i>
+                                <span>Reports</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="<?= base_url() ?>admin/reports"><i class="fa fa-circle-o"></i> Reports Details</a></li>
+                            </ul>
+                        </li> -->
+						<li class="treeview">
+                            <a href="<?= base_url() ?>admin/scribe-change-template-request">
+                                <i class="fa fa-file"></i>
+                                <span>Template Changes</span>
+                            </a>
+                            <!--<ul class="treeview-menu">
+								<li>
+									<a href="<?= base_url() ?>admin/scribe-change-template-request"><i class="fa fa-circle-o"></i> 
+										Change Template Details
+									</a>
+								</li>
+                            </ul>-->
+							
+                        </li>
+						<!--<li class="treeview"  style="width:300px;">
+                           <a href="javascript:void(0)">
+                              <i class="fa fa-file"></i>
+                                 <!--  <span>Template Change request</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>-->
+                           <!-- </a> 
+                            <ul class="treeview-menu" style="width:250px;">
+                                <!--<li>
+									<a href="<?= base_url() ?>admin/change-template-request"><i class="fa fa-circle-o"></i> 
+										Admin Change Template Details
+									</a>
+								</li>-->
+								<!--<li>
+									<a href="<?= base_url() ?>admin/scribe-change-template-request"><i class="fa fa-circle-o"></i> 
+										Scribe Change Template Details
+									</a>
+								</li>
+                            </ul>
+						</li>-->
+						<li class="treeview">
+                            <a href="<?= base_url() ?>admin/scribe-change-template-report">
+                                <i class="fa fa-file"></i>
+                                <span>Reports</span>
+                            </a>
+                            <!--<ul class="treeview-menu">
+								<li>
+									<a href="<?= base_url() ?>admin/scribe-change-template-report"><i class="fa fa-circle-o"></i> 
+										Template Report
+									</a>
+								</li>
+                            </ul>-->
+                        </li>
+						<!--<li class="treeview">
+							<a href="<?= base_url() ?>admin/record">
+								<i class="fa fa-file"></i>
+								<span>Record</span>
+							</a>
+						</li>--> 
+						<!--<li class="treeview">
+                            <!--<a href="<?= base_url() ?>cron-job">-->
+                           <!-- <a href="javascript:void(0)" onclick="cronJob();">
+                                <i class="fa fa-file"></i>
+                                <span>Cron Jobs</span>
+                            </a>
+                        </li>-->
+						<li class="treeview">
+							<a href="<?= base_url() ?>admin/userListing">
+								<i class="fa fa-users"></i>
+								<span>Admin Users</span>
+							</a>
+						</li>
+						
+                    <?php endif; ?>
+                    <?php if ($role == ROLE_ADMIN) : ?>
+						<li class="treeview">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-file"></i>
+                                <span>Masters</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="<?= base_url() ?>admin/main-title"><i class="fa fa-circle-o"></i>Main Title</a></li>
+                                <li><a href="<?= base_url() ?>admin/answer-master"><i class="fa fa-circle-o"></i>Title Answer Master</a></li>
+                            </ul>
+                        </li>
+						<li class="treeview">
+                            <a href="<?= base_url() ?>admin/form-templates-assign">
+                                <i class="fa fa-file"></i>
+                                <span>Form Templates Assign</span>
+                            </a>
+                        </li>
+                        <li class="treeview">
+                            <a href="<?= base_url() ?>admin/form-for-me">
+                                <i class="fa fa-file"></i>
+                                <span>Templates</span>
+                            </a>
+                        </li>
+						<li class="treeview"  style="width:300px;">
+                           <a href="javascript:void(0)">
+                              <i class="fa fa-file"></i>
+                                 <!--  <span>Template Change request</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>-->
+                            </a> 
+                            <ul class="treeview-menu" style="width:250px;">
+                                <li>
+									<a href="<?= base_url() ?>admin/change-template-request"><i class="fa fa-circle-o"></i> 
+										Admin Change Template Details
+									</a>
+								</li>
+								<li>
+									<a href="<?= base_url() ?>admin/scribe-change-template-request"><i class="fa fa-circle-o"></i> 
+										Scribe Change Template Details
+									</a>
+								</li>
+                            </ul>
+						</li>
+						<li class="treeview">
+                            <a href="<?= base_url() ?>admin/scribe-change-template-report">
+                                <i class="fa fa-file"></i>
+                                <span>Reports</span>
+                            </a>
+                           
+                        </li>
+						<li class="treeview">
+							<a href="<?= base_url() ?>admin/userListing">
+								<i class="fa fa-users"></i>
+								<span>Admin Users</span>
+							</a>
+						</li>
+                    <?php endif; ?>
+					<?php if ($role == ROLE_SCRIBE) : ?>
+						<li class="treeview">
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-file"></i>
+                                <span>Masters</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a href="<?= base_url() ?>admin/main-title"><i class="fa fa-circle-o"></i>Main Title</a></li>
+                                <li><a href="<?= base_url() ?>admin/answer-master"><i class="fa fa-circle-o"></i>Title Answer Master</a></li>
+                            </ul>
+                        </li>
+						<li class="treeview">
+                            <a href="<?= base_url() ?>admin/form-for-me">
+                                <i class="fa fa-file"></i>
+                                <span>Templates</span>
+                            </a>
+                        </li>
+						<li class="treeview">
+                            <a href="<?= base_url() ?>admin/scribe-change-template-report">
+                                <i class="fa fa-file"></i>
+                                <span>Reports</span>
+                            </a>
+                        </li>
+						<li class="treeview">
+                            <a href="<?= base_url() ?>admin/generate_report_template">
+                                <i class="fa fa-file"></i>
+                                <span> Generate Reports</span>
+                            </a>
+                        </li>
+					<?php endif;?>
+                    
+                </ul>
+            </section>
+            <!-- /.sidebar -->
+        </aside>

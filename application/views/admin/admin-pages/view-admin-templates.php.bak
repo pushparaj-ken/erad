@@ -1,0 +1,550 @@
+<style>
+    .text-box-border {
+        padding: 20px;
+        border: 2px solid #3c8dbc;
+        margin: 20px 0;
+    } 
+	.answer_text.btn_hide_class a {
+		display: none;
+	} 
+
+	
+	#searchResult{ 
+		
+	border: 1px solid #3c8dbc;
+	
+	
+	}
+	#searchResult p{ 
+
+	padding:10px;
+	}
+	
+</style>
+<?php if ($role == ROLE_ADMIN) : ?>
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-body table-responsive">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <h3 class="box-title"><?= $temp_id->name ?></h3>
+                            </div>
+                            <!-- /.box-header -->
+                            <!-- form start -->
+                            <form role="form" class="insert_template" reload-action="true" this_id="<?= uniqid() ?>">
+                                <input type="hidden" name="template_form_id" value="<?php echo $temp_id->id ?>">
+                                <div class="box-body">
+                                    <div class="row">
+										<?php 
+											$template = $this->common_model->get_records('tbl_admin_copy_template_fields', "status='0' and copy_template_form_id='$temp_id->id' group by order_by"); 
+											foreach($template as $order) {
+										?>
+										<?php if ($order->title != ""): ?>
+										<h3>
+											<?=$this->common_model->get_record("tbl_main_title","status = '0' and id = '$order->title'","title");?>
+										</h3>
+										<?php endif;?>
+										<?php foreach($this->common_model->get_records('tbl_admin_copy_template_fields', "status='0' and copy_template_form_id='$temp_id->id' and assign_id = '".$_SESSION['userId']."' and order_by = '$order->order_by'") as $template_field) { ?>
+										<?php if ($template_field ->type == 10 ) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="method[]" id="<?= $template_field->form_fields_id ?>">
+														<option selected disabled >-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '".$_SESSION['userId']."'") as $options) : ?>
+															<option value="<?= $options->name ?>"><?= $options->name ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+											</div>
+										<?php } else if ($template_field ->type == 9 ) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?> <input type ="checkbox" id ="date"></label>
+													<input type ="date" name ="comparison_date" class="form-control" id="date1">
+												</div>
+											</div>
+										<?php } else if ($template_field ->type == 2) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="option_name[]" id="<?= $template_field->form_fields_id ?>">
+														<option value="">-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '".$_SESSION['userId']."'") as $options) : ?>
+															<option value="<?= $options->id ?>"><?= $options->name ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+												<input type="hidden" value="<?= $order->title ?>" name="title_id[]">
+											</div>
+										<?php } else if ($template_field ->type == 4) { ?>
+											<div class="col-md-12">
+												<div class="form-group " id="checkbox">
+													<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '".$_SESSION['userId']."'") as $options) : ?>
+													   <input type="checkbox" name="option_name[]" id="checkboxes<?= $options->id ?>" onclick="hideshow(<?= $options->id ?>)" value="<?= $options->id ?>">
+														<?= $options->name ?>
+														<input type="hidden" value="<?= $options->id ?>" name="label">
+													<?php endforeach; ?>
+												</div>
+												<?php if($_POST['label'] == 0) 
+												{ 
+													echo '<input type="hidden" value="0" name="option_name[]">';
+												}
+												?>
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+											</div>
+										<?php } } } ?>         
+                                    </div>
+                                </div>
+                                <!-- /.box-body -->
+
+                                <div class="box-footer">
+                                    <button type="submit" class="btn btn-primary">Generate</button>
+                                    <a class="btn btn-primary" onclick="$('.insert_template')[0].reset()">clear</a>
+                                </div>
+								<div class="col-md-6 hide-ans">
+									<h3>Findings</h3>
+									<div class="text-box-border">
+										
+									</div>	
+								</div>	
+								<div class="col-md-6 hide-ans">
+									<h3>Impressions</h3>
+									<div class="text-box-border">
+										<div class="impressions_text"></div>
+									</div>
+								</div>
+                                <div class="answer_text"></div>
+                                <!--<div class="col-md-6">
+                                    <div class="answer_text"></div>
+                                </div>-->
+                            </form>
+                        </div>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div>
+        </div>
+    </section>
+</div>
+<?php elseif ($role == ROLE_SCRIBE) : ?>
+<style>
+	.custom-btn 
+	{
+		position: absolute;
+		left: 152px;
+		top: -44px;
+	}
+	
+</style>
+<div class="content-wrapper">
+    <section class="content">
+	 <a class="btn btn-sm btn-info" style="margin-right: 5px;" data-toggle="modal" data-target="#modal-default" >Search</a>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-body table-responsive">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <h3 class="box-title"><?= $temp_id->name ?></h3>
+                            </div>
+                            <!-- /.box-header -->
+                            <!-- form start -->
+                            <form  id = "insert_template" class="insert_template" reload-action="true" method="post" this_id="<?= uniqid() ?>">
+                                <input type="hidden" name="template_form_id" value="<?php echo $temp_id->id ?>">
+                                <div class="box-body">
+                                    <div class="row">
+										<?php 
+											$template = $this->common_model->get_records('tbl_admin_copy_template_fields', "status='0' and copy_template_form_id='$temp_id->id' and assign_id = '".$_SESSION['userId']."' group by order_by"); 
+											foreach($template as $order) {
+										?>
+										<?php if ($order->title != ""): ?>
+										<h3>
+											<?=$this->common_model->get_record("tbl_main_title","status = '0' and id = '$order->title'","title");?>
+										</h3>
+										<?php endif;?>
+										<?php foreach($this->common_model->get_records('tbl_admin_copy_template_fields', "status='0' and copy_template_form_id='$temp_id->id' and assign_id = '".$_SESSION['userId']."' and order_by = '$order->order_by'") as $template_field) { ?>
+										<?php if ($template_field ->type == 10 ) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="method[]" id="<?= $template_field->form_fields_id ?>">
+														<option value="">-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '".$_SESSION['userId']."'") as $options) : ?>
+															<option value="<?= $options->name ?>"><?= $options->name ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+											</div>
+										<?php } else if ($template_field ->type == 9 ) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?> <input type ="checkbox" id ="date"></label>
+													<input type ="date" name ="comparison_date" class="form-control" id="date1">
+												</div>
+											</div>
+										<?php } else if ($template_field ->type == 2) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="option_name[]" id="<?= $template_field->form_fields_id ?>">
+														<option value="">-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '".$_SESSION['userId']."'") as $options) : ?>
+															<option value="<?= $options->input_option_id ?>"><?= $options->name ?></option>
+															 
+														<?php endforeach; ?>
+													</select>
+												</div>
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->form_fields_id ?>" name="label_id[]">
+												<input type="hidden" value="<?= $order->title ?>" name="title_id[]">
+											</div>
+										<?php } else if ($template_field ->type == 4) { ?>
+											<div class="col-md-12">
+												<div class="form-group " id="checkbox">
+													<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '".$_SESSION['userId']."'") as $options) : ?>
+													   <input type="checkbox" name="option_name[]" id="<?= $template_field->id ?>" onclick="hideshow(<?= $options->id ?>)" value="<?= $options->input_option_id ?>">
+														<?= $options->name ?>
+														<!--<input id='testNameHidden' type='hidden' value='0' name='option_name[]'>-->
+													<?php endforeach; ?>
+												</div>
+												
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->form_fields_id ?>" name="label_id[]">
+											</div>
+										<?php } } } ?>         
+                                    </div>
+                                </div>
+                                <!-- /.box-body -->
+
+                                <div class="box-footer">
+                                    <button type="submit" class="btn btn-primary">Generate</button>
+                                    <a class="btn btn-primary"  onclick="$('.insert_template')[0].reset()">clear</a>
+									<span class="btn btn-primary foo" data-clipboard-target="#div1"  onclick="myFunction1()">
+										Copy
+									</span>
+                                </div>
+								<div class="col-md-6 hide-ans">
+									<h3>Findings</h3>
+									<div class="text-box-border">
+										
+									</div>	
+								</div>	
+								<div class="col-md-6 hide-ans">
+									<h3>Impressions</h3>
+									<div class="text-box-border">
+										<div class="impressions_text"></div>
+										
+									</div>
+								</div>
+                                <div class="answer_text"></div>
+                               
+                            </form>
+						</div>	
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="exampleInputEmail1">Search</label>
+							<input type ="text" id="txt_search" name="txt_search" class="form-control" >
+						</div>
+												
+			
+						<div id="searchResult">
+							
+						</div>
+						
+						
+						
+						
+						
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="button" class="btn btn-default pull-left" data-dismiss="modal" value="Close">
+				
+				<a class="copy-text float-right btn btn-primary mt-2" data-clipboard-target="#searchResult"  href="javascript:void(0)">Copy To Clipboard</a>
+			
+			</div>
+        </div>
+    </div>
+</div>
+
+
+<?php endif;?>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/clipboard.js/1.5.12/clipboard.min.js"></script>
+
+<script>
+$(function(){
+  new Clipboard('.foo');
+
+
+});
+</script>
+<script>
+$(document).ready(function(){
+	
+  $("a").click(function(){
+    $("#content3").remove();
+    $("#content4").remove();
+  });
+});
+</script>
+<script>
+    function yesnoCheck(that) {
+        if (that.value == "1") {
+            document.getElementById("seg1").style.display = "block";
+        } else {
+            document.getElementById("seg1").style.display = "none";
+        }
+        if (that.value == "2") {
+            document.getElementById("seg2").style.display = "block";
+        } else {
+            document.getElementById("seg2").style.display = "none";
+        }
+        if (that.value == "3") {
+            document.getElementById("seg3").style.display = "block";
+        } else {
+            document.getElementById("seg3").style.display = "none";
+        }
+    }
+</script>
+
+
+<script>
+	
+    $('body').on("submit", '.insert_template', function(e) {
+        e.preventDefault();
+
+        var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+		var check = [];
+		
+		var a = $('input:checkbox:checked');
+		$(a).each(function () {
+			$(this).val()      
+		});
+
+		var b = $("input:checkbox:not(:checked)");
+		$(b).each(function () {
+			$(this).addClass("unchecked");
+			$(this).prop('checked',true);
+			check.push($(this).val());
+			$(this).attr('value','0');
+			console.log(check);
+			
+		});
+				   
+			
+        if (is_required(this_id) === true) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + "admin/insert_template",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                    $(this_id + ' button[type=submit]').attr('disabled', 'true');
+                },
+                success: function(response) {
+
+                    if (response.result == 1) {
+						$(".unchecked").each(function() {
+							n=0;
+							$(this).prop('checked',false);
+							$(this).val(check[n]);
+							n++;
+						});
+						$(".unchecked").removeClass("unchecked");
+						
+                        toastr.success('Success!');
+                        var temps_id = response.temp_id;
+						
+						// var check = response.record;
+						// if ($('#' + check).is(":checked"))
+						// {
+							// $('input[type=checkbox]').prop('checked',true);
+						// }
+						// else 
+						// {
+							// $('input[type=checkbox]').prop('checked',false);
+						// }
+						//$('input[type=checkbox]').prop('checked',false);
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                        $(this_id + ' button[type=submit]').removeAttr('disabled');
+                        $.ajax({
+                            type: 'POST',
+                            url: baseURL + "admin/get_answer_value",
+                            data: "template_id=" + temps_id,
+                            success: function(response2) {
+                                $('.answer_text').html(response2);
+								$('.hide-ans').hide();
+								
+                            }
+                        });
+                    } else {
+                        toastr.error('Something went wrong! Please try again later!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                        $(this_id + ' button[type=submit]').removeAttr('disabled');
+                    }
+                }
+
+            });
+        } else {
+            toastr.error('Please check the required fields!');
+        }
+    });
+</script>
+
+
+
+<script>
+    function myFunction1() {
+		 $('.temp').hide();
+		var value = $('#content1').text() + $('#content2').text();
+        var hvalue = $('#content1').text();
+        var hvalue1 = $('#content2').text();
+        var template_form_id = $('input[name=template_form_id]').val();
+        var assign_id = $('input[name=assign_id]').val();
+        var techniques = $('input[name=techniques]').val();
+        var comparision_date = $('input[name=comparision_date]').val();
+        $.ajax({
+            type: "POST",
+            url: baseURL + "admin/copy-record" ,
+            data: "finding_text=" + hvalue + "&impressions_text=" + hvalue1 + "&template_form_id=" + template_form_id + "&assign_id=" + assign_id + "&techniques=" + techniques + "&comparision_date=" + comparision_date,
+			dataType: "json",
+			// beforeSend: function() {
+				// $('#insert_template' + ' input[type=submit]').attr('disabled', 'true');
+				// $('#insert_template' + ' button[type=submit]').attr('disabled', 'true');
+			// },
+            success: function(response) {
+                if (response.result == 1) 
+				{
+                   toastr.success('Success!');
+					 $('.temp').show();
+					 
+				} 
+				else 
+				{
+					toastr.error('Something went wrong! Please try again later!');
+					
+				} 
+			}
+        });
+    }
+</script>
+<script>
+    function hideshow($id) {
+        $.ajax({
+            type: "POST",
+            url: baseURL + "admin/get-value/" + $id,
+            dataType: "json",
+            success: function(response) {
+                if (response.result == 1) {
+                    $.each(response.records, function(key, val) {
+
+                        var option = val.select_fields_id;
+                        var options = val.option_id;
+                        if ($('#checkboxes' + options).is(":checked")) {
+                            $("#" + option).hide();
+                        } else {
+                            $("#" + option).show();
+                        }
+                    })
+                }
+            }
+        });
+    }
+</script>
+<script>
+    function generate($id) {
+        $.ajax({
+            type: "POST",
+            url: baseURL + "admin/get-generator/" + $id,
+            dataType: "json",
+            success: function(response) {
+                if (response.result == 1) {
+
+                    $('#test').text();
+                }
+            }
+        });
+    }
+</script>
+
+<script>
+function divClicked() {
+    var divHtml = $(this).html();
+    var editableText = $("<textarea />");
+    editableText.val(divHtml);
+    $(this).replaceWith(editableText);
+    editableText.focus();
+    // setup the blur event for this new textarea
+    editableText.blur(editableTextBlurred);
+}
+
+function editableTextBlurred() {
+    var html = $(this).val();
+    var viewableText = $("<div>");
+    viewableText.html(html);
+    $(this).replaceWith(viewableText);
+    // setup the click event for this new div
+    viewableText.click(divClicked);
+}
+
+$(document).ready(function() {
+    $("#content1").click(divClicked);
+});
+
+</script>
+<script>
+$(document).ready(function(){
+	$('#searchResult').hide();
+    $("#txt_search").keyup(function(){
+		var hvalue = $('#content1').text();
+        var hvalue1 = $('#content2').text();
+        var search = $(this).val();
+        if(search != ""){
+            $.ajax({
+                type: 'post',
+                url: baseURL + 'admin/search',
+                data: "search=" + search,
+                dataType: 'json',
+                success:function(response){
+                    $("#searchResult").empty();
+                    $.each(response.serach, function(key, val) {
+						$('#searchResult').show();
+					   $("#searchResult").append("<p >"+val.name+"</p>");
+					   
+				    })
+					
+                }
+            });
+        }
+
+    });
+
+});
+
+</script>
+
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/admin/js/common.js" charset="utf-8"></script>

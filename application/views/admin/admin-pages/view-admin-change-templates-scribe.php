@@ -1,0 +1,513 @@
+<style>
+    .answer_text {
+        padding: 20px;
+        border: 2px solid #3c8dbc;
+        margin: 20px 0;
+    }
+</style>
+<div class="content-wrapper">
+    <section class="content">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box">
+                    <div class="box-body table-responsive">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <h2 class="box-title">Old Template</h2></br></br>
+                                <h3 class="box-title"><?= $temp_id->name ?></h3>
+                            </div>
+                            <!-- /.box-header -->
+                            <!-- form start -->
+                                <input type="hidden" name="template_form_id" value="<?php echo $temp_id->id ?>">
+                                <div class="box-body">
+                                    <div class="row">
+										<?php 
+											$assign_exit_id = $this->common_model->get_records('tbl_users', "isDeleted='0' and roleId = '4'");
+										foreach($assign_exit_id as $assign_scribe) { ?>
+										<?php if($this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","answer_name") == "" && $this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","main_title") == ""){ ?>
+										<?php 
+											$template = $this->common_model->get_records('tbl_admin_copy_template_fields', "status='0' and copy_template_form_id='$temp_id->id' and assign_id ='$assign_scribe->userId' group by order_by"); 
+											foreach($template as $order) {
+										?>
+										<?php if ($order->title != ""): ?>
+										<h3>
+											<?=$this->common_model->get_record("tbl_main_title","status = '0' and id = '$order->title'","title");?>
+										</h3>
+										<?php endif;?>
+										<?php foreach($this->common_model->get_records('tbl_admin_copy_template_fields', "status='0' and copy_template_form_id='$temp_id->id' and order_by = '$order->order_by' and assign_id ='$assign_scribe->userId'") as $template_field) { ?>
+										<?php if ($template_field ->type == 10 ) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="techniques[]" id="<?= $template_field->form_fields_id ?>">
+														<option value="">-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '$assign_scribe->createdBy'") as $options) : ?>
+															<option value="<?= $options->name ?>"><?= $options->name ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+											</div>
+										<?php } else if ($template_field ->type == 9 ) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?> <input type ="checkbox" id ="date"></label>
+													<input type ="date" name ="comparison_date[]" class="form-control" id="date1">
+												</div>
+											</div>
+										<?php } else if ($template_field ->type == 2) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="option_name[]" id="<?= $template_field->form_fields_id ?>">
+														<option value="">-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '$assign_scribe->createdBy'") as $options) : ?>
+															<option value="<?= $options->id ?>"><?= $options->name ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+												<input type="hidden" value="<?= $order->title ?>" name="title_id[]">
+											</div>
+										<?php } else if ($template_field ->type == 4) { ?>
+											<div class="col-md-12">
+												<div class="form-group " id="checkbox">
+													<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '$assign_scribe->createdBy'") as $options) : ?>
+													   <input type="checkbox" name="option_name[]" id="checkboxes<?= $options->id ?>" onclick="hideshow(<?= $options->id ?>)" value="<?= $options->id ?>">
+														<?= $options->name ?>
+														<input type="hidden" value="<?= $options->id ?>" name="label">
+													<?php endforeach; ?>
+												</div>
+												<?php if($_POST['label'] == 0) 
+												{ 
+													echo '<input type="hidden" value="0" name="option_name[]">';
+												}
+												?>
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+											</div>
+										<?php } } }  ?>
+										<?php } elseif ($this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","answer_name") != "" && $this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","main_title") == ""){?>
+										
+										<?php 
+											$template = $this->common_model->get_records('tbl_admin_copy_template_fields', "status='0' and copy_template_form_id='$temp_id->id' and assign_id ='$assign_scribe->userId' group by order_by");  
+											foreach($template as $order) {
+										?>
+											<?php if ($order->title != ""): ?>
+												<h3>
+													<?=$this->common_model->get_record("tbl_main_title","status = '0' and id = '$order->title'","title");?>
+												</h3>
+											<?php endif;?>
+											<?php foreach($this->common_model->get_records('tbl_admin_copy_template_fields', "status='0' and copy_template_form_id='$temp_id->id' and order_by = '$order->order_by' and assign_id ='$assign_scribe->userId'") as $template_field) { ?>
+											<?php if ($template_field->type == 10 ) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="techniques[]" id="<?= $template_field->form_fields_id ?>">
+														<option value="">-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '$assign_scribe->createdBy'") as $options) : ?>
+															<option value="<?= $options->name ?>"><?= $options->name ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+											</div>
+										<?php } elseif ($template_field->type == 9 ) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?> <input type ="checkbox" id ="date"></label>
+													<input type ="date" name ="comparison_date[]" class="form-control" id="date1">
+												</div>
+											</div>
+										<?php } elseif ($template_field->type == 2) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="option_name[]" id="<?= $template_field->form_fields_id ?>">
+														<option value="">-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '$assign_scribe->createdBy'") as $options) : ?>
+															<option value="<?= $options->id ?>"><?= $options->name ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+												<input type="hidden" value="<?= $order->title ?>" name="title_id[]">
+											</div>
+										<?php } elseif ($template_field->type == 4) { ?>
+											<div class="col-md-12">
+												<div class="form-group " id="checkbox">
+													<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->form_fields_id' and assign_id = '$assign_scribe->createdBy'") as $options) : ?>
+													   <input type="checkbox" name="option_name[]" id="checkboxes<?= $options->id ?>" onclick="hideshow(<?= $options->id ?>)" value="<?= $options->id ?>">
+														<?= $options->name ?>
+														<input type="hidden" value="<?= $options->id ?>" name="label">
+													<?php endforeach; ?>
+												</div>
+												<?php if($_POST['label'] == 0) 
+												{ 
+													echo '<input type="hidden" value="0" name="option_name[]">';
+												}
+												?>
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+											</div>
+										<?php }}} ?> 
+										<?php } elseif ($this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","answer_name") == ""  && $this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","main_title") != "" )  { ?>
+										<?php  foreach($this->common_model->get_records('tbl_copy_main_title', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->userId' ") as $type){ ?>
+										<div class="col-md-12">
+											<div class="form-group">
+												<label>Form Template</label>
+												<select class="form-control"  name="template_form_id"  >
+													<option value="">Select template</option>
+													
+														<option <?=($temp_id->id == $type->template_form_id)?"selected":""?> value="<?=$type->template_form_id?>"><?=$this->common_model->get_record('tbl_category_with_form', "status='0' and id='$temp_id->id' ","name")?></option>
+												</select>
+											</div>
+										</div>
+										
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="title">Name</label>
+												<input type="text" class="form-control" name="title" value = "<?=$type->title?>">
+												<input type="hidden" name="row_id" value="">
+												<input type="hidden" name="label_id" value="">
+												<input type="hidden" name="table_name" value="tbl_main_title">
+												<input type="hidden" name="updated_by" value="<?= $_SESSION['userId']; ?>">
+											</div> 
+										</div> 
+										<?php } }} ?>
+										
+                                    </div>
+                                </div>
+                                <!-- /.box-body -->
+
+                        </div>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div>
+			<div class="col-md-6">
+                <div class="box">
+                    <div class="box-body table-responsive">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+								<h2 class="box-title">New Template</h2></br></br>
+                                <h3 class="box-title"><?= $temp_id->name ?></h3>
+                            </div>
+                            <!-- /.box-header -->
+                            <!-- form start -->
+                                <input type="hidden" name="template_form_id" value="<?php echo $temp_id->id ?>">
+                                <div class="box-body">
+                                    <div class="row">
+										<?php 
+											$assign_exit_id = $this->common_model->get_records('tbl_users', "isDeleted='0' and roleId = '4'");
+										foreach($assign_exit_id as $assign_scribe) { ?>
+										<?php if($this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","answer_name") == "" && $this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","main_title") == ""){ ?>
+										<?php 
+											$template = $this->common_model->get_records('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy' group by order_by"); 
+											foreach($template as $order) {
+										?>
+                                       
+                                            <?php if ($order->title != ""): ?>
+										<h3>
+											<?=$this->common_model->get_record("tbl_main_title","status = '0' and id = '$order->title'","title");?>
+										</h3>
+											<?php endif;?>
+										<?php foreach($this->common_model->get_records('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy' and order_by = '$order->order_by'") as $template_field) { ?>
+											<?php if ($template_field->type == 10 ) { ?>
+												<div class="col-md-11">
+													<div class="form-group" id="<?= $template_field->id ?>">
+														<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+														<select type="text" class="form-control" name="techniques[]" id="<?= $template_field->form_fields_id ?>">
+															<option value="">-- Select --</option>
+															<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->label_id' and assign_id ='$assign_scribe->createdBy'") as $options) : ?>
+																<option value="<?= $options->name ?>"><?= $options->name ?></option>
+															<?php endforeach; ?>
+														</select>
+													</div>
+												</div>
+												<form class="update_data" this_id="form-<?= uniqid() ?>" reload-action="true">
+													<div class="col-md-1">
+														<div class="form-group">
+															<input type="hidden" name="row_id" value="<?= $order->id ?>">
+															<input type="hidden" name="status" value="3">
+															<input type="hidden" name="table_name" value="tbl_template_logs">
+															<button class="btn btn-sm btn-danger" type="submit">
+																<i class="fa fa-close"></i>
+															</button>
+														</div>
+													</div>
+												</form>
+											<?php } elseif ($template_field->type == 9 ) { ?>
+												<div class="col-md-11">
+													<div class="form-group" id="<?= $template_field->id ?>">
+														<label for="exampleInputEmail1"><?= $template_field->name ?> <input type ="checkbox" id ="date"></label>
+														<input type ="date" name ="comparison_date[]" class="form-control" id="date1">
+													</div>
+												</div>
+												<form class="update_data" this_id="form-<?= uniqid() ?>" reload-action="true">
+													<div class="col-md-1">
+														<div class="form-group">
+															<input type="hidden" name="row_id" value="<?= $order->id ?>">
+															<input type="hidden" name="status" value="3">
+															<input type="hidden" name="table_name" value="tbl_template_logs">
+															<button class="btn btn-sm btn-danger" type="submit">
+																<i class="fa fa-close"></i>
+															</button>
+														</div>
+													</div>
+												</form>
+											<?php } elseif ($template_field->type == 2) { ?>
+												<div class="col-md-11">
+													<div class="form-group" id="<?= $template_field->id ?>">
+														<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+														<select type="text" class="form-control" name="option_name[]" id="<?= $template_field->form_fields_id ?>">
+															<option value="">-- Select --</option>
+															<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->label_id' and assign_id ='$assign_scribe->createdBy' ") as $options) : ?>
+																<option value="<?= $options->id ?>"><?= $options->name ?></option>
+															<?php endforeach; ?>
+														</select>
+													</div>
+													<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+													<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+													<input type="hidden" value="<?= $order->title ?>" name="title_id[]">
+												</div>
+												<form class="update_data" this_id="form-<?= uniqid() ?>" reload-action="true">
+													<div class="col-md-1">
+														<div class="form-group">
+															<input type="hidden" name="row_id" value="<?= $order->id ?>">
+															<input type="hidden" name="status" value="3">
+															<input type="hidden" name="table_name" value="tbl_template_logs">
+															<button class="btn btn-sm btn-danger" type="submit">
+																<i class="fa fa-close"></i>
+															</button>
+														</div>
+													</div>
+												</form>
+											<?php } elseif ($template_field->type == 4) { ?>
+												<div class="col-md-11">
+													<div class="form-group " id="checkbox">
+														<?php foreach ($this->common_model->get_records('tbl_copy_input_options', "status='0' and input_id='$template_field->label_id' and assign_id ='$assign_scribe->createdBy'") as $options) : ?>
+														   <input type="checkbox" name="option_name[]" id="checkboxes<?= $options->id ?>" onclick="hideshow(<?= $options->id ?>)" value="<?= $options->id ?>">
+															<?= $options->name ?>
+															<input type="hidden" value="<?= $options->id ?>" name="label">
+														<?php endforeach; ?>
+													</div>
+													<?php if($_POST['label'] == 0) 
+													{ 
+														echo '<input type="hidden" value="0" name="option_name[]">';
+													}
+													?>
+													<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+													<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+												</div>
+												<form class="update_data" this_id="form-<?= uniqid() ?>" reload-action="true">
+													<div class="col-md-1">
+														<div class="form-group">
+															<input type="hidden" name="row_id" value="<?= $order->id ?>">
+															<input type="hidden" name="status" value="3">
+															<input type="hidden" name="table_name" value="tbl_template_logs">
+															<button class="btn btn-sm btn-danger" type="submit">
+																<i class="fa fa-close"></i>
+															</button>
+														</div>
+													</div>
+												</form>
+										<?php } }} ?> 
+									<?php } elseif ($this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","answer_name") != "" && $this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","main_title") == ""){?>
+										
+										<?php 
+											$template = $this->common_model->get_records('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy' group by order_by"); 
+											foreach($template as $order) {
+										?>
+											<?php if ($order->title != ""): ?>
+												<h3>
+													<?=$this->common_model->get_record("tbl_main_title","status = '0' and id = '$order->title'","title");?>
+												</h3>
+											<?php endif;?>
+											<?php foreach($this->common_model->get_records('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy' and order_by = '$order->order_by'") as $template_field) { ?>
+											<?php if ($template_field->type == 10 ) { ?>
+											<div class="col-md-11">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="techniques[]" id="<?= $template_field->form_fields_id ?>">
+														<option value="">-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_template_logs', "status='0' and label_id='$template_field->label_id' and assign_id ='$assign_scribe->createdBy'") as $options) : ?>
+															<option value="<?= $options->name ?>"><?= $options->answer_name ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+											</div>
+											<form class="update_data" this_id="form-<?= uniqid() ?>" reload-action="true">
+												<div class="col-md-1">
+													<div class="form-group">
+														<input type="hidden" name="row_id" value="<?= $order->id ?>">
+														<input type="hidden" name="status" value="3">
+														<input type="hidden" name="table_name" value="tbl_template_logs">
+														<button class="btn btn-sm btn-danger" type="submit">
+															<i class="fa fa-close"></i>
+														</button>
+													</div>
+												</div>
+											</form>
+										<?php } elseif ($template_field->type == 9 ) { ?>
+											<div class="col-md-12">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?> <input type ="checkbox" id ="date"></label>
+													<input type ="date" name ="comparison_date[]" class="form-control" id="date1">
+												</div>
+											</div>
+											<form class="update_data" this_id="form-<?= uniqid() ?>" reload-action="true">
+												<div class="col-md-1">
+													<div class="form-group">
+														<input type="hidden" name="row_id" value="<?= $order->id ?>">
+														<input type="hidden" name="status" value="3">
+														<input type="hidden" name="table_name" value="tbl_template_logs">
+														<button class="btn btn-sm btn-danger" type="submit">
+															<i class="fa fa-close"></i>
+														</button>
+													</div>
+												</div>
+											</form>
+										<?php } elseif ($template_field->type == 2) { ?>
+											<div class="col-md-11">
+												<div class="form-group" id="<?= $template_field->id ?>">
+													<label for="exampleInputEmail1"><?= $template_field->name ?></label>
+													<select type="text" class="form-control" name="option_name[]" id="<?= $template_field->form_fields_id ?>">
+														<option value="">-- Select --</option>
+														<?php foreach ($this->common_model->get_records('tbl_template_logs', "status='0' and label_id='$template_field->label_id' and assign_id ='$assign_scribe->createdBy'") as $options) : ?>
+															<option value="<?= $options->id ?>"><?= $options->answer_name ?></option>
+														<?php endforeach; ?>
+													</select>
+												</div>
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+												<input type="hidden" value="<?= $order->title ?>" name="title_id[]">
+											</div>
+											<form class="update_data" this_id="form-<?= uniqid() ?>" reload-action="true">
+												<div class="col-md-1">
+													<div class="form-group">
+														<input type="hidden" name="row_id" value="<?= $order->id ?>">
+														<input type="hidden" name="status" value="3">
+														<input type="hidden" name="table_name" value="tbl_template_logs">
+														<button class="btn btn-sm btn-danger" type="submit">
+															<i class="fa fa-close"></i>
+														</button>
+													</div>
+												</div>
+											</form>
+										<?php } elseif ($template_field->type == 4) { ?>
+											<div class="col-md-11">
+												<div class="form-group " id="checkbox">
+													<?php foreach ($this->common_model->get_records('tbl_template_logs', "status='0' and label_id='$template_field->label_id' and assign_id ='$assign_scribe->createdBy'") as $options) : ?>
+													   <input type="checkbox" name="option_name[]" id="checkboxes<?= $options->id ?>" onclick="hideshow(<?= $options->id ?>)" value="<?= $options->id ?>">
+														<?= $options->answer_name ?>
+														<input type="hidden" value="<?= $options->id ?>" name="label">
+													<?php endforeach; ?>
+												</div>
+												<?php if($_POST['label'] == 0) 
+												{ 
+													echo '<input type="hidden" value="0" name="option_name[]">';
+												}
+												?>
+												<input type="hidden" value="<?= $template_field->name ?>" name="label_name[]">
+												<input type="hidden" value="<?= $template_field->id ?>" name="label_id[]">
+											</div>
+											<form class="update_data" this_id="form-<?= uniqid() ?>" reload-action="true">
+												<div class="col-md-1">
+													<div class="form-group">
+														<input type="hidden" name="row_id" value="<?= $order->id ?>">
+														<input type="hidden" name="status" value="3">
+														<input type="hidden" name="table_name" value="tbl_template_logs">
+														<button class="btn btn-sm btn-danger" type="submit">
+															<i class="fa fa-close"></i>
+														</button>
+													</div>
+												</div>
+											</form>
+										<?php }}} ?> 
+									<?php } elseif ($this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","answer_name") == ""  && $this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","main_title") != "" )  { ?>
+										<div class="col-md-12">
+											<div class="form-group">
+												<label>Form Template</label>
+												<select class="form-control"  name="template_form_id"  >
+													<option value="">Select template</option>
+													<?php 
+														$template = $this->common_model->get_records('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'"); 
+														
+													foreach($template as $type): ?>
+														<option <?=($temp_id->id == $type->template_form_id)?"selected":""?> value="<?=$type->template_form_id?>"><?=$this->common_model->get_record('tbl_category_with_form', "status='0' and id='$temp_id->id' ","name")?></option>
+													 <?php endforeach;?>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="title">Name</label>
+												<input type="text" class="form-control" name="title" value = "<?=$this->common_model->get_record('tbl_template_logs', "status='0' and template_form_id='$temp_id->id' and assign_id ='$assign_scribe->createdBy'","main_title")?>">
+												<input type="hidden" name="row_id" value="">
+												<input type="hidden" name="label_id" value="">
+												<input type="hidden" name="table_name" value="tbl_main_title">
+												<input type="hidden" name="updated_by" value="<?= $_SESSION['userId']; ?>">
+											</div> 
+										</div> 
+									<?php } }?>
+                                    </div>
+                                </div>
+                                <!-- /.box-body -->
+
+                        </div>
+                    </div><!-- /.box-body -->
+                </div><!-- /.box -->
+            </div>
+        </div>
+		<form class="change-template-scribe">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Change Template Request </label>
+						<select class="form-control"  name="request" onchange="$(this).parent().submit();">
+								<option value="">--Select--</option>
+								<option value="2">Accepted</option>
+								<option value="3">Rejected</option>
+						</select>
+						<input type="hidden" value="<?=$temp_id->id?>" name="row_id">
+						
+					</div>
+				</div>
+			</div>
+		</form>
+    </section>
+</div>
+<script>
+	
+	$('body').on("submit", '.change-template-scribe', function(e){
+		e.preventDefault();
+		
+		$.ajax({
+			type: 'POST',
+			url: baseURL + "admin/approve-change-template-scribe",
+			data: new FormData(this),
+			dataType: "json",
+			contentType: false,
+			processData: false,
+			success: function(response){
+				if(response.result == 1)
+				{
+					toastr.success('Approve!');
+					setTimeout(function (){
+						window.location.href = baseURL + "admin/scribe-change-template-request";
+					}, 1000);
+				}
+				else
+				{
+					toastr.error("Rejected");
+					setTimeout(function (){
+						window.location.href = baseURL + "admin/scribe-change-template-request";
+					}, 1000);
+				}
+			}
+		});
+	});
+
+</script>
+
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/admin/js/common.js" charset="utf-8"></script>

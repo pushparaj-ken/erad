@@ -1,0 +1,23 @@
+{
+  "_id": {
+    "$oid": "63077a5178e2020016332dcc"
+  },
+  "id": 1,
+  "header_id": 1,
+  "amount_paid": 100,
+  "date": "2022-08-26",
+  "createdBy": "Thu Aug 25 2022 13:03:20 GMT+0000 (Coordinated Universal Time)",
+  "updatedBy": "Thu Aug 25 2022 13:03:20 GMT+0000 (Coordinated Universal Time)",
+  "status": 1,
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1661434449082"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1661434449082"
+    }
+  },
+  "__v": 0
+}

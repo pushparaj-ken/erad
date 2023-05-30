@@ -1,0 +1,936 @@
+/**
+ * @author Praveen Murali
+ */
+
+
+jQuery(document).ready(function() {
+
+    jQuery(document).on("click", ".deleteUser", function() {
+        var userId = $(this).data("userid"),
+            hitURL = baseURL + "admin/deleteUser",
+            currentRow = $(this);
+
+        var confirmation = confirm("Are you sure to delete this user ?");
+
+        if (confirmation) {
+            jQuery.ajax({
+                type: "POST",
+                dataType: "json",
+                url: hitURL,
+                data: { userId: userId }
+            }).done(function(data) {
+                console.log(data);
+                currentRow.parents('tr').remove();
+                if (data.status = true) {
+                    alert("User successfully deleted");
+                } else if (data.status = false) {
+                    alert("User deletion failed");
+                } else {
+                    alert("Access denied..!");
+                }
+            });
+        }
+    });
+
+
+    jQuery(document).on("click", ".searchList", function() {
+
+    });
+
+});
+
+$('body').on("submit", '.insert_data', function(e) {
+    e.preventDefault();
+
+    for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+    }
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+
+    if (is_required(this_id) === true) {
+        $.ajax({
+            type: 'POST',
+            url: baseURL + "admin/insert",
+            data: new FormData(this),
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                $(this_id + ' button[type=submit]').attr('disabled', 'true');
+            },
+            success: function(response) {
+                console.log(response)
+                if (response.result == 1) {
+                    $(this_id)[0].reset();
+                    toastr.success('Success!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+
+                    if ($(this_id).attr('reload-action') === 'true') {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    toastr.error('Something went wrong! Please try again later!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+                }
+            }
+        });
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.update_data', function(e) {
+    e.preventDefault();
+
+    for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+    }
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+	if (is_required(this_id) === true) {
+		$.ajax({
+			type: 'POST',
+			url: baseURL + "admin/update",
+			data: new FormData(this),
+			dataType: "json",
+			contentType: false,
+			processData: false,
+			beforeSend: function() {
+				$(this_id + ' input[type=submit]').attr('disabled', 'true');
+			},
+			success: function(response) {
+				if (response.result == 1) {
+					toastr.success('Success!');
+					$(this_id + ' input[type=submit]').removeAttr('disabled');
+
+					if ($(this_id).attr('reload-action') === 'true') {
+						setTimeout(function() {
+							location.reload();
+						}, 1000); 
+					}
+				} else {
+					toastr.error('Something went wrong! Please try again later!');
+					$(this_id + ' input[type=submit]').removeAttr('disabled');
+				}
+			}
+		});
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.update_data_post', function(e) {
+    e.preventDefault();
+
+    for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+    }
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+    var is_ok = 1;
+    if (is_required(this_id) === true) {
+        if ($(this).children('input[name=status]').val() == 1) {
+            if (confirm("Are you sure to delete this record?")) {
+                is_ok = 1;
+            } else {
+                is_ok = 0;
+            }
+        }
+
+        if (is_ok == 1) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + "admin/update_data_post",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                },
+                success: function(response) {
+                    if (response.result == 1) {
+                        toastr.success('Request send Sucessfully!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+
+                        if ($(this_id).attr('reload-action') === 'true') {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        toastr.error('Something went wrong! Please try again later!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    }
+                }
+            });
+        }
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.insert_data_option', function(e) {
+    e.preventDefault();
+
+    for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+    }
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+    var is_ok = 1;
+    if (is_required(this_id) === true) {
+        if ($(this).children('input[name=status]').val() == 1) {
+            if (confirm("Are you sure to delete this record?")) {
+                is_ok = 1;
+            } else {
+                is_ok = 0;
+            }
+        }
+
+        if (is_ok == 1) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + "admin/insert_data_option",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                },
+                success: function(response) {
+                    if (response.result == 1) {
+                        toastr.success('Request send Sucessfully!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+
+                        if ($(this_id).attr('reload-action') === 'true') {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        toastr.error('Something went wrong! Please try again later!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    }
+                }
+            });
+        }
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.insert_data_super_admin', function(e) {
+    e.preventDefault();
+
+    for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+    }
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+    var is_ok = 1;
+    if (is_required(this_id) === true) {
+        if ($(this).children('input[name=status]').val() == 1) {
+            if (confirm("Are you sure to delete this record?")) {
+                is_ok = 1;
+            } else {
+                is_ok = 0;
+            }
+        }
+
+        if (is_ok == 1) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + "admin/insert_data_super_admin",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                },
+                success: function(response) {
+                    if (response.result == 1) {
+                        toastr.success('Request send Sucessfully!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+						setTimeout(function() {
+							location.reload();
+						}, 1000);
+                        if ($(this_id).attr('reload-action') === 'true') {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        toastr.error('Something went wrong! Please try again later!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    }
+                }
+            });
+        }
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.update_data_option', function(e) {
+    e.preventDefault();
+
+    for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+    }
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+    var is_ok = 1;
+    if (is_required(this_id) === true) {
+        if ($(this).children('input[name=status]').val() == 1) {
+            if (confirm("Are you sure to delete this record?")) {
+                is_ok = 1;
+            } else {
+                is_ok = 0;
+            }
+        }
+
+        if (is_ok == 1) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + "admin/update_data_option",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                },
+                success: function(response) {
+                    if (response.result == 1) {
+                        toastr.success('Request send Sucessfully!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+
+                        if ($(this_id).attr('reload-action') === 'true') {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        toastr.error('Something went wrong! Please try again later!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    }
+                }
+            });
+        }
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.insert_data_scribe_option', function(e) {
+    e.preventDefault();
+
+    for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+    }
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+
+    if (is_required(this_id) === true) {
+        $.ajax({
+            type: 'POST',
+            url: baseURL + "admin/insert_data_scribe_option",
+            data: new FormData(this),
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                $(this_id + ' button[type=submit]').attr('disabled', 'true');
+            },
+            success: function(response) {
+                console.log(response)
+                if (response.result == 1) {
+                    $(this_id)[0].reset();
+                    toastr.success('Success!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+
+                    if ($(this_id).attr('reload-action') === 'true') {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    toastr.error('Something went wrong! Please try again later!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+                }
+            }
+        });
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.insert_data_scribe_main', function(e) {
+    e.preventDefault();
+
+    for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+    }
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+
+    if (is_required(this_id) === true) {
+        $.ajax({
+            type: 'POST',
+            url: baseURL + "admin/insert_data_scribe_main",
+            data: new FormData(this),
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                $(this_id + ' button[type=submit]').attr('disabled', 'true');
+            },
+            success: function(response) {
+                console.log(response)
+                if (response.result == 1) {
+                    $(this_id)[0].reset();
+                    toastr.success('Success!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+
+                    if ($(this_id).attr('reload-action') === 'true') {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    toastr.error('Something went wrong! Please try again later!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+                }
+            }
+        });
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.update_data_post_template_field', function(e) {
+    e.preventDefault();
+
+    for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+    }
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+    var is_ok = 1;
+    if (is_required(this_id) === true) {
+        if ($(this).children('input[name=status]').val() == 1) {
+            if (confirm("Are you sure to delete this record?")) {
+                is_ok = 1;
+            } else {
+                is_ok = 0;
+            }
+        }
+
+        if (is_ok == 1) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + "admin/update_data_post_template_field",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                },
+                success: function(response) {
+                    if (response.result == 1) {
+                        toastr.success('Request send Sucessfully!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+
+                        if ($(this_id).attr('reload-action') === 'true') {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        toastr.error('Something went wrong! Please try again later!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    }
+                }
+            });
+        }
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.update_data_admin_option', function(e) {
+    e.preventDefault();
+
+    for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+    }
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+    var is_ok = 1;
+    if (is_required(this_id) === true) {
+        if ($(this).children('input[name=status]').val() == 1) {
+            if (confirm("Are you sure to delete this record?")) {
+                is_ok = 1;
+            } else {
+                is_ok = 0;
+            }
+        }
+
+        if (is_ok == 1) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + "admin/update_data_admin_option",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                },
+                success: function(response) {
+                    if (response.result == 1) {
+                        toastr.success('Request send Sucessfully!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+
+                        if ($(this_id).attr('reload-action') === 'true') {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        toastr.error('Something went wrong! Please try again later!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    }
+                }
+            });
+        }
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.update_data_option_scribe', function(e) {
+    e.preventDefault();
+
+    for (instance in CKEDITOR.instances) {
+        CKEDITOR.instances[instance].updateElement();
+    }
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+    var is_ok = 1;
+    if (is_required(this_id) === true) {
+        if ($(this).children('input[name=status]').val() == 1) {
+            if (confirm("Are you sure to delete this record?")) {
+                is_ok = 1;
+            } else {
+                is_ok = 0;
+            }
+        }
+
+        if (is_ok == 1) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + "admin/update_data_option_scribe",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                },
+                success: function(response) {
+                    if (response.result == 1) {
+                        toastr.success('Request send Sucessfully!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+
+                        if ($(this_id).attr('reload-action') === 'true') {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        toastr.error('Something went wrong! Please try again later!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    }
+                }
+            });
+        }
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.update_data_scribe', function(e) {
+    e.preventDefault();
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+    var is_ok = 1;
+    if (is_required(this_id) === true) {
+        if ($(this).children('input[name=status]').val() == 1) {
+            if (confirm("Are you sure to delete this record?")) {
+                is_ok = 1;
+            } else {
+                is_ok = 0;
+            }
+        }
+
+        if (is_ok == 1) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + "admin/update_data_scribe",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                },
+                success: function(response) {
+                    if (response.result == 1) {
+                        toastr.success('Request send Sucessfully!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+
+                        if ($(this_id).attr('reload-action') === 'true') {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        toastr.error('Something went wrong! Please try again later!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    }
+                }
+            });
+        }
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.update_data_scribe_main', function(e) {
+    e.preventDefault();
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+    var is_ok = 1;
+    if (is_required(this_id) === true) {
+        if ($(this).children('input[name=status]').val() == 1) {
+            if (confirm("Are you sure to delete this record?")) {
+                is_ok = 1;
+            } else {
+                is_ok = 0;
+            }
+        }
+
+        if (is_ok == 1) {
+            $.ajax({
+                type: 'POST',
+                url: baseURL + "admin/update_data_scribe_main",
+                data: new FormData(this),
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                },
+                success: function(response) {
+                    if (response.result == 1) {
+                        toastr.success('Request send Sucessfully!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+
+                        if ($(this_id).attr('reload-action') === 'true') {
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                    } else {
+                        toastr.error('Something went wrong! Please try again later!');
+                        $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    }
+                }
+            });
+        }
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+
+$('body').on("submit", '.insert_hide_items', function(e) {
+    e.preventDefault();
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+
+    if (is_required(this_id) === true) {
+        $.ajax({
+            type: 'POST',
+            url: baseURL + "admin/insert_hide_items",
+            data: new FormData(this),
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                $(this_id + ' button[type=submit]').attr('disabled', 'true');
+				
+            },
+            success: function(response) {
+                console.log(response)
+                if (response.result == 1) {
+                    toastr.success('Success!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+
+                    if ($(this_id).attr('reload-action') === 'true') {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    toastr.error('Something went wrong! Please try again later!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+                }
+            }
+        });
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+
+
+$('body').on("submit", '.assigned-template-admin', function(e) {
+    e.preventDefault();
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+
+    if (is_required(this_id) === true) {
+        $.ajax({
+            type: 'POST',
+            url: baseURL + "admin/assigned-template-admin",
+            data: new FormData(this),
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                $(this_id + ' button[type=submit]').attr('disabled', 'true');
+				$('.spinner-border').show();
+            },
+            success: function(response) {
+                console.log(response);
+				$('.spinner-border').hide();
+                if (response.result == 1) {
+                    toastr.success('Success!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+                    if ($(this_id).attr('reload-action') === 'true') {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    toastr.error('Something went wrong! Please try again later!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+                }
+            }
+        });
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.assigned-template-admin-scribe', function(e) {
+    e.preventDefault();
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+
+    if (is_required(this_id) === true) {
+        $.ajax({
+            type: 'POST',
+            url: baseURL + "admin/assigned-template-admin-scribe",
+            data: new FormData(this),
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                $(this_id + ' button[type=submit]').attr('disabled', 'true');
+				$('.spinner-border').show();
+            },
+            success: function(response) {
+                console.log(response);
+				$('.spinner-border').hide();
+                if (response.result == 1) {
+                    toastr.success('Success!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+
+                    if ($(this_id).attr('reload-action') === 'true') {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    toastr.error('Something went wrong! Please try again later!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+                }
+            }
+        });
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+$('body').on("submit", '.insert_template_data', function(e) {
+    e.preventDefault();
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+
+    if (is_required(this_id) === true) {
+        $.ajax({
+            type: 'POST',
+            url: baseURL + "admin/insert-template-data",
+            data: new FormData(this),
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                $(this_id + ' button[type=submit]').attr('disabled', 'true');
+            },
+            success: function(response) {
+                console.log(response)
+                if (response.result == 1) {
+                    toastr.success('Success!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+
+                    if ($(this_id).attr('reload-action') === 'true') {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    toastr.error('Something went wrong! Please try again later!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+                }
+            }
+        });
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+function is_required(this_id) {
+    $('.error-span').hide();
+    var inc = 0;
+    $(this_id + " .required").each(function() {
+        console.log($(this).attr('name'));
+        if ($(this).val() !== "undefined") {
+            if ($(this).val() != null) {
+                if (($(this).val()).length > 0) {
+
+                } else {
+                    console.log($(this).attr('name'));
+                    $(this).next("span").show();
+                    inc++;
+                }
+            } else {
+                toastr.error('Something went wrong on ' + $(this).attr('name'));
+                inc++;
+            }
+        }
+    });
+    if (inc === 0) {
+        return true;
+    }
+    return false;
+}
+
+$('body').on("submit", '.insert_main_answer_data', function(e) {
+    e.preventDefault();
+
+
+    var this_id = 'form[this_id=' + $(this).attr('this_id') + ']';
+
+    if (is_required(this_id) === true) {
+        $.ajax({
+            type: 'POST',
+            url: baseURL + "admin/insert_main_answer_data",
+            data: new FormData(this),
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                $(this_id + ' input[type=submit]').attr('disabled', 'true');
+                $(this_id + ' button[type=submit]').attr('disabled', 'true');
+            },
+            success: function(response) {
+                console.log(response)
+                if (response.result == 1) {
+                    $(this_id)[0].reset();
+                    toastr.success('Success!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+
+                    if ($(this_id).attr('reload-action') === 'true') {
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    toastr.error('Something went wrong! Please try again later!');
+                    $(this_id + ' input[type=submit]').removeAttr('disabled');
+                    $(this_id + ' button[type=submit]').removeAttr('disabled');
+                }
+            }
+        });
+    } else {
+        toastr.error('Please check the required fields!');
+    }
+});
+
+
+function edit_record(row_id, table) {
+    $.ajax({
+        type: 'POST',
+        url: baseURL + "admin/get_record/" + table + "/" + row_id,
+        dataType: "json",
+        beforeSend: function() {
+            $('button').attr('disabled', 'true');
+        },
+        success: function(response) {
+            if (response.result == 1) {
+                $('#edit input[name=row_id]').val(row_id);
+                Object.keys(response.data).forEach(function(key) {
+                    $('#edit input[name=' + key + ']').val(response.data[key]);
+                });
+                $('button').removeAttr('disabled');
+                $('#edit').modal();
+            } else {
+                toastr.error('Something went wrong! Please try again later!');
+                $('button').removeAttr('disabled');
+            }
+        }
+    });
+}
